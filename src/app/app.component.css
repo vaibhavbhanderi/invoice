@@ -1,0 +1,39 @@
+.btn1{
+  margin-left: 980px;
+  width: 50px;
+  height: 20px;
+  border-radius: 50px;
+  color: white;
+  background-color: green;
+}
+.row1{
+  margin-left: 50px;
+  width: 25%;
+  display: flex;
+justify-content: space-between;
+}
+
+.row2{
+  margin-left: 30px;
+  display: flex;
+  padding: 20px;
+  width: 25%;
+  justify-content: space-between;
+}
+td{
+
+ padding: 5px 50px 10px 50px ;
+}
+.btn3{
+  background-color: red;
+  border-radius: 20px;
+  color: white;
+}
+.footer{
+  margin-left: 900px;
+  margin-top: 200px;
+
+}
+.discount{
+  width: 15px;
+}
