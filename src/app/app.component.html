@@ -4,7 +4,7 @@
  <div class="row1">
   <div>
     <label for="Name">Name</label>
-    <input formControlName="id" id="Name">
+    <input formControlName="Name" id="Name">
     <div *ngIf="form.controls['Name'].invalid && form.controls['Name'].touched">
       Name is Required, must be alphabets and min length is 5
     </div>
@@ -30,13 +30,13 @@
   </div>
   <div>
     <label for="Contact">Contact</label>
-    <input formControlName="Address" id="Contact">
+    <input formControlName="Contact" id="Contact">
     <div *ngIf="form.controls['Contact'].invalid && form.controls['Contact'].touched">
-      allow only Numerical and maximum digit 10 allowed
+    Frist latter much be 6,7,8,9  allow only Numerical and maximum digit 10 allowed
     </div>
   </div>
   </div>
-  <button class="btn1" (click)="addOption()">Add</button>
+  <button class="btn1" type="button" (click)="addOption()">Add</button>
   <table>
     <thead>
     <tr>
@@ -76,7 +76,7 @@
           form.controls['Products'].controls[i].controls['ProductPrice'].touched
         "
         >
-          Category Name required must be alphabets and min length is 5
+         Product Price only required Numerical value
         </div>
 
       </td>
@@ -89,7 +89,7 @@
           form.controls['Products'].controls[i].controls['ProductQuntity'].touched
         "
         >
-          Category Name required must be alphabets and min length is 5
+          Product Quntity only required Numerical value
         </div>
       </td>
       <td >
@@ -106,23 +106,23 @@
   </table>
 
   <div class="footer">
-    <h4>SubTotal:</h4>
+    <h4>SubTotal:{{TotalAMount}}</h4>
 
-    <h4>Discount :  <select
-      class="custom-select mb-3"
-      (change)="changeDISCOUNT($event)"
-      formControlName="Discount"
+    <h4>Discount :<input formControlName="Discount" placeholder="Enter Discount % "> </h4>
+    <div
+      *ngIf="
+          form.controls['Discount'].invalid &&
+          form.controls['Discount'].touched
+        "
     >
-      <option value="" >Choose Discount</option>
-      <option *ngFor="let Discount of Discount" [ngValue]="Discount">
-        {{ Discount }}
-      </option>
-    </select> </h4>
-
-    <h4>Tax Rate</h4>
-     <h4>Tax</h4>
-    <h2>Total:</h2>
+      Discount  only required Numerical value or Positive value
+    </div>
+<h4> Your Discount :  {{discountvalue()}}</h4>
+    <h4>Tax Rate :{{Rate}}%</h4>
+     <h4>Tax:{{TaxTotal()}}</h4>
+    <h2>Total:{{grandtotal()}}</h2>
 
   </div>
-  <input type="button" value="Invoice Add" [disabled]="form.invalid">
+  <input type="button" value="Invoice Add" [disabled]="form.invalid"  (click)="function1()"  >
 </form>
+
