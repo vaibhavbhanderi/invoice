@@ -1,34 +1,17 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {FormArray, FormControl, FormGroup, FormGroupDirective, Validators} from "@angular/forms"
-import * as pdfMake from 'pdfmake/build/pdfmake';
-import *as pdfFonts from 'pdfmake/build/vfs_fonts';
+import {Invoice} from './invoice';
 
-class Product{
-  ProductName: string='';
-  ProductPrice: number=0;
-  ProductQuntity: number=0;
-}
-class Invoice{
-  Name: string='';
-  Email: string='';
-  Address: number=0;
-  Contact: string='';
-
-  Products: Product[] = [];
-
-
-  constructor(){
-    // Initially one empty product row we will show
-    (window as any).pdfMake.vfs = pdfFonts.pdfMake.vfs;
-    this.Products.push(new Product());
-  }
-}
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
 export class AppComponent {
   title = 'Invoice';
   total = 0;
@@ -58,7 +41,7 @@ export class AppComponent {
   }
 
   submit(form: FormGroupDirective) {
-    alert(0)
+
     if (form.valid) {
       console.warn(JSON.stringify(form.value))
     }
@@ -140,120 +123,252 @@ export class AppComponent {
 
 
 //   pdf create part
+  invoice: Invoice;
 
-  invoice = new Invoice();
+  constructor() {
+    this.invoice = new Invoice();
+  }
 
+  public saveInvoice() {
 
-
-  pdfContent:any = {
-    content: [
-      {
-        text: 'ELECTRONIC SHOP',
-        fontSize: 16,
-        alignment: 'center',
-        color: '#047886'
-      },
-      {
-        text: 'INVOICE',
-        fontSize: 20,
-        bold: true,
-        alignment: 'center',
-        decoration: 'underline',
-        color: 'skyblue'
-      },
-      {
-        text: 'Customer Details',
-        style: 'sectionHeader'
-      },
-      {
-        columns: [
-          [
-            {
-              text: this.invoice.Name,
-              bold: true
-            },
-            {text: this.invoice.Address},
-            {text: this.invoice.Email},
-            {text: this.invoice.Contact}
-          ],
-          [
-            {
-              text: `Date: ${new Date().toLocaleString()}`,
-              alignment: 'right'
-            },
-            {
-              text: `Bill No : ${((Math.random() * 1000).toFixed(0))}`,
-              alignment: 'right'
+    const doc = new jsPDF();
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: 'VAIBHAV BILL',
+            styles: {
+              halign: 'left',
+              fontSize: 20,
+              textColor: '#ffffff'
             }
-          ]
-        ]
-      },
-      {
-        text: 'Order Details',
-        style: 'sectionHeader'
-      },
-      {
-        table: {
-          headerRows: 1,
-          widths: ['*', 'auto', 'auto', 'auto'],
-          body: [
-            ['Product', 'Price', 'Quantity', 'Amount'],
-            ...this.invoice.Products.map(p => ([p.ProductName, p.ProductPrice, p.ProductQuntity, (p.ProductPrice * p.ProductQuntity).toFixed(2)])),
-            [{
-              text: 'Total Amount',
-              colSpan: 3
-            }, {}, {}, this.invoice.Products.reduce((sum, p) => sum + (p.ProductQuntity * p.ProductPrice), 0).toFixed(2)]
-          ]
-        }
-      },
-      // {
-      //   text: 'Additional Details',
-      //   style: 'sectionHeader'
-      // },
-      // {
-      //   text: this.invoice.Name,
-      //   margin: [0, 0, 0, 15]
-      // },
-      // {
-      //   columns: [
-      //     [{qr: `${this.invoice.Name}`, fit: '50'}],
-      //     [{text: 'Signature', alignment: 'right', italics: true}],
-      //   ]
-      // },
-      {
-        text: 'Terms and Conditions',
-        style: 'sectionHeader'
-      },
-      {
-        ul: [
-          'Order can be return in max 10 days.',
-          'Warrenty of the product will be subject to the manufacturer terms and conditions.',
-          'This is system generated invoice.',
+          },
+          {
+            content: 'Invoice',
+            styles: {
+              halign: 'right',
+              fontSize: 20,
+              textColor: '#ffffff'
+            }
+          }
         ],
+      ],
+      theme: 'plain',
+      styles: {
+        fillColor: '#3366ff'
       }
-    ],
-    styles: {
-      sectionHeader: {
-        bold: true,
-        decoration: 'underline',
-        fontSize: 14,
-        margin: [0, 15, 0, 15]
+    });
+
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: 'Reference: #INV0001'
+              + '\nDate: 2022-01-27'
+              + '\nInvoice number: 123456',
+            styles: {
+              halign: 'right'
+            }
+          }
+        ],
+      ],
+      theme: 'plain'
+    });
+
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: 'Billed to:'
+              +   `Name:\n${this.invoice.Name}`
+              + `Name:\n${this.invoice.Email}`
+              + `Contact:\n${this.invoice.Contact}`
+              + `Address:\n${this.invoice.Address}`
+              ,
+            styles: {
+              halign: 'left'
+            }
+          },
+          {
+            content: 'Shipping address:'
+              + '\nVaibhav Bhanderi'
+              + '\n Rajkot,Gujarat '
+              + '\n New Radhika Hostel MavdiChock  '
+              + '\n360004'
+              + '\nIndia',
+            styles: {
+              halign: 'left'
+            }
+          },
+          {
+            content: 'From:'
+              + '\nGhanshyam Digital LLP '
+              + '\n107,21st century business centre, Ring Rd,'
+              + '\n nr. World trade centre, Surat'
+              + '\nGujarat 395002'
+              + '\nIndia',
+            styles: {
+              halign: 'right'
+            }
+          }
+        ],
+      ],
+      theme: 'plain'
+    });
+
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: 'Amount due:',
+            styles: {
+              halign: 'right',
+              fontSize: 14
+            }
+          }
+        ],
+        [
+          {
+            content: `${this.invoice.grandtotal}`,
+            styles: {
+              halign: 'right',
+              fontSize: 20,
+              textColor: '#3366ff'
+            }
+          }
+        ],
+        [
+          {
+            content: 'Due date: 2022-02-01',
+            styles: {
+              halign: 'right'
+            }
+          }
+        ]
+      ],
+      theme: 'plain'
+    });
+
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: 'Products & Services',
+            styles: {
+              halign: 'left',
+              fontSize: 14
+            }
+          }
+        ]
+      ],
+      theme: 'plain'
+    });
+
+    autoTable(doc, {
+      head: [['Items', 'Category', 'Quantity', 'Price', 'Tax', 'Amount']],
+      body: [
+        ['Product or service name', 'Category', '2', '$450', '$50', '$1000'],
+        ['Product or service name', 'Category', '2', '$450', '$50', '$1000'],
+        ['Product or service name', 'Category', '2', '$450', '$50', '$1000'],
+        ['Product or service name', 'Category', '2', '$450', '$50', '$1000']
+      ],
+      theme: 'striped',
+      headStyles: {
+        fillColor: '#343a40'
       }
-    }
-  };
+    });
 
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: 'Subtotal:',
+            styles: {
+              halign: 'right'
+            }
+          },
+          {
+            content: '$3600',
+            styles: {
+              halign: 'right'
+            }
+          },
+        ],
+        [
+          {
+            content: 'Total tax:',
+            styles: {
+              halign: 'right'
+            }
+          },
+          {
+            content: '$400',
+            styles: {
+              halign: 'right'
+            }
+          },
+        ],
+        [
+          {
+            content: 'Total amount:',
+            styles: {
+              halign: 'right'
+            }
+          },
+          {
+            content: '$4000',
+            styles: {
+              halign: 'right'
+            }
+          },
+        ],
+      ],
+      theme: 'plain'
+    });
 
-    // else if(action === 'print'){
-    //   pdfMake.createPdf(docDefinition).print();
-    // }else{
-    //   pdfMake.createPdf(docDefinition).open();
-    // }
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: 'Terms & notes',
+            styles: {
+              halign: 'left',
+              fontSize: 14
+            }
+          }
+        ],
+        [
+          {
+            content: 'orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia'
+              + 'molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum'
+              + 'numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium',
+            styles: {
+              halign: 'left'
+            }
+          }
+        ],
+      ],
+      theme: "plain"
+    });
 
-  function1(){
-    let pdf = pdfMake.createPdf(this.pdfContent);
-    pdf.download();
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: 'This is a centered footer',
+            styles: {
+              halign: 'center'
+            }
+          }
+        ]
+      ],
+      theme: "plain"
+    });
+
+    return doc.save("invoice");
 
   }
 
 
 }
+

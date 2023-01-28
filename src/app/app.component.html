@@ -1,17 +1,17 @@
 <h2 xmlns="http://www.w3.org/1999/html">Create Invoice Form</h2>
 <h3>Customer Details </h3>
-<form [formGroup]="form" #SingupForm="ngForm" (ngSubmit)="submit(SingupForm)">
+<form [formGroup]="form" #SingupForm="ngForm" (ngSubmit)="submit(SingupForm)" >
  <div class="row1">
   <div>
     <label for="Name">Name</label>
-    <input formControlName="Name" id="Name">
+    <input formControlName="Name" id="Name" [(ngModel)]="invoice.Name">
     <div *ngIf="form.controls['Name'].invalid && form.controls['Name'].touched">
       Name is Required, must be alphabets and min length is 5
     </div>
   </div>
   <div>
     <label for="Email">Email</label>
-    <input formControlName="Email" id="Email">
+    <input formControlName="Email" id="Email" [(ngModel)]="invoice.Email" >
     <div
       *ngIf="form.controls['Email'].invalid && form.controls['Email'].touched"
     >
@@ -23,14 +23,14 @@
   <div class="row2">
   <div>
     <label for="Address">Address</label>
-    <input formControlName="Address" id="Address">
+    <input formControlName="Address" id="Address" [(ngModel)]="invoice.Address">
     <div *ngIf="form.controls['Address'].invalid && form.controls['Address'].touched">
       Address is Required, must be alphabets and min length is 15
     </div>
   </div>
   <div>
     <label for="Contact">Contact</label>
-    <input formControlName="Contact" id="Contact">
+    <input formControlName="Contact" id="Contact" [(ngModel)]="invoice.Contact">
     <div *ngIf="form.controls['Contact'].invalid && form.controls['Contact'].touched">
     Frist latter much be 6,7,8,9  allow only Numerical and maximum digit 10 allowed
     </div>
@@ -55,7 +55,7 @@
       <td>
 
 
-        <input formControlName="ProductName" id="ProductName"/>
+        <input formControlName="ProductName" id="ProductName" />
         <div
           *ngIf="
           form.controls['Products'].controls[i].controls['ProductName'].invalid &&
@@ -93,7 +93,7 @@
         </div>
       </td>
       <td >
-        <label> ${{   calculateTotal(i) }}</label>
+        <label > ${{   calculateTotal(i) }}</label>
 <!--        {{TotalAMount}}-->
       </td>
       <td>
@@ -106,7 +106,7 @@
   </table>
 
   <div class="footer">
-    <h4>SubTotal:{{TotalAMount}}</h4>
+    <h4 >SubTotal:{{TotalAMount}}</h4>
 
     <h4>Discount :<input formControlName="Discount" placeholder="Enter Discount % "> </h4>
     <div
@@ -120,9 +120,8 @@
 <h4> Your Discount :  {{discountvalue()}}</h4>
     <h4>Tax Rate :{{Rate}}%</h4>
      <h4>Tax:{{TaxTotal()}}</h4>
-    <h2>Total:{{grandtotal()}}</h2>
-
+    <h2  >Total:{{grandtotal()}}</h2>
   </div>
-  <input type="button" value="Invoice Add" [disabled]="form.invalid"  (click)="function1()"  >
+  <input type="submit" value="Invoice Add" [disabled]="form.invalid" (click)="saveInvoice()"  >
 </form>
 
